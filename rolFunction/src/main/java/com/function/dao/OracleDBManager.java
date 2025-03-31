@@ -14,40 +14,40 @@ public class OracleDBManager {
     private static final String TNS_ADMIN = "C:/Wallet_CSMZSQ3ZR41HPBVN"; // Ruta donde está el wallet
 
 
-    private static final List<Rol> roles = new ArrayList<>();
+    // private static final List<Rol> roles = new ArrayList<>();
 
-    static {
-        roles.add(new Rol(1, "Administrador", "1"));
-        roles.add(new Rol(2, "Usuario", "1"));
-        roles.add(new Rol(3, "Invitado", "1"));
-    }
+    // static {
+    //     roles.add(new Rol(1, "Administrador", "1"));
+    //     roles.add(new Rol(2, "Usuario", "1"));
+    //     roles.add(new Rol(3, "Invitado", "1"));
+    // }
 
-    static {
-        // Establecer propiedad del wallet
-        System.setProperty("oracle.net.tns_admin", TNS_ADMIN);
-    }
+    // static {
+    //     // Establecer propiedad del wallet
+    //     System.setProperty("oracle.net.tns_admin", TNS_ADMIN);
+    // }
 
 
-    public static List<Rol> getRoles() {
-        return roles;
-    }
+    // public static List<Rol> getRoles() {
+    //     return roles;
+    // }
 
-    public static Rol getRolById(int id) {
-        return roles.stream().filter(rol -> rol.getId() == id).findFirst().orElse(null);
-    }
+    // public static Rol getRolById(int id) {
+    //     return roles.stream().filter(rol -> rol.getId() == id).findFirst().orElse(null);
+    // }
 
-    public static boolean addRol(Rol rol) {
-        return roles.add(rol);  
-    }
-    public static boolean updateRol(int id, String newName) {
-        Optional<Rol> rolOptional = roles.stream().filter(rol -> rol.getId() == id).findFirst();
-        if (rolOptional.isPresent()) {
-            Rol rol = rolOptional.get();
-            rol.setDescripcion(newName);  
-            return true;
-        }
-        return false;  
-    }
+    // public static boolean addRol(Rol rol) {
+    //     return roles.add(rol);  
+    // }
+    // public static boolean updateRol(int id, String newName) {
+    //     Optional<Rol> rolOptional = roles.stream().filter(rol -> rol.getId() == id).findFirst();
+    //     if (rolOptional.isPresent()) {
+    //         Rol rol = rolOptional.get();
+    //         rol.setDescripcion(newName);  
+    //         return true;
+    //     }
+    //     return false;  
+    // }
 
 
     /////////// BDDDDDD

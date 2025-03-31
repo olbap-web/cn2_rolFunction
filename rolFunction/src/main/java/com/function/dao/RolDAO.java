@@ -1,144 +1,120 @@
-// package com.function.dao;
+package com.function.dao;
 
 
-// import com.function.model.Rol;
-// import com.zaxxer.hikari.HikariConfig;
-// import com.zaxxer.hikari.HikariDataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-// import java.sql.*;
-// import java.util.ArrayList;
-// import java.util.List;
+import com.function.model.Rol;
 
-// public class RolDAO {
-//     private static final HikariDataSource dataSource;
+public class RolDAO {
 
-//     static {
-//         HikariConfig config = new HikariConfig();
-//         config.setJdbcUrl(System.getenv("DB_URL"));
-//         config.setUsername(System.getenv("DB_USER"));
-//         config.setPassword(System.getenv("DB_PASSWORD"));
-//         config.setMaximumPoolSize(10);
-//         config.setDriverClassName("oracle.jdbc.OracleDriver");
-        
-//         // Configuraciones específicas para Oracle
-//         config.addDataSourceProperty("cachePrepStmts", "true");
-//         config.addDataSourceProperty("prepStmtCacheSize", "250");
-//         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        
-//         dataSource = new HikariDataSource(config);
-//     }
+    private static final String DB_USER = "user_bdd_users";
+    private static final String DB_PASS = "ActSum.S5_BDY";
+    private static final String WALLET_PATH = "C: /Wallet_CSMZSQ3ZR41HPBVN";
 
-//     // CREATE
-//     public Rol create(Rol rol) throws SQLException {
-//         String sql = "INSERT INTO ROLES (ID, DESCRIPCION, ESTADO) VALUES (?, ?, ?)";
-        
-//         try (Connection conn = dataSource.getConnection();
-//              PreparedStatement stmt = conn.prepareStatement(sql, 
-//                  new String[] {"ID"})) {
-            
-//             stmt.setString(1, rol.getId());
-//             stmt.setString(2, rol.getDescripcion());
-//             stmt.setString(3, rol.getEstado());
-            
-//             int affectedRows = stmt.executeUpdate();
-            
-//             if (affectedRows == 0) {
-//                 throw new SQLException("No se pudo crear el rol");
-//             }
-            
-//             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-//                 if (generatedKeys.next()) {
-//                     rol.setId(generatedKeys.getString(1));
-//                 }
-//             }
-            
-//             return rol;
-//         }
-//     }
+    static {
+        System.setProperty("oracle.net.tns_admin", WALLET_PATH);
+        System.setProperty("javax.net.ssl.trustStoreType", "SSO");
+        System.setProperty("oracle.net.ssl_server_dn_match", "true");
+    }
 
-//     // READ (by ID)
-//     public Rol getById(String id) throws SQLException {
-//         String sql = "SELECT * FROM ROLES WHERE ID = ?";
-        
-//         try (Connection conn = dataSource.getConnection();
-//              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-//             stmt.setString(1, id);
-            
-//             try (ResultSet rs = stmt.executeQuery()) {
-//                 if (rs.next()) {
-//                     return mapRowToRol(rs);
-//                 }
-//                 return null;
-//             }
-//         }
-//     }
+    private static Connection getConnection() throws SQLException {
+        System.out.println("🟡 Conectando a Oracle...");
+        String url = "jdbc:oracle:thin:@csmzsq3zr41hpbvn_high?TNS_ADMIN=" + WALLET_PATH;
+        Connection conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
+        System.out.println("🟢 ¡Conexión exitosa!");
+        return conn;
+    }
 
-//     // READ (all)
-//     public List<Rol> getAll() throws SQLException {
-//         String sql = "SELECT * FROM ROLES";
-//         List<Rol> roles = new ArrayList<>();
-        
-//         try (Connection conn = dataSource.getConnection();
-//              Statement stmt = conn.createStatement();
-//              ResultSet rs = stmt.executeQuery(sql)) {
-            
-//             while (rs.next()) {
-//                 roles.add(mapRowToRol(rs));
-//             }
-            
-//             return roles;
-//         }
-//     }
+    public static Rol crearRol(Rol r) {
+        String sql = "INSERT INTO ROL (ID_ROL, DESCRIPCION, ESTADO) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, r.getId());
+            ps.setString(2, r.getDescripcion());
+            ps.setString(3, r.getEstado());
 
-//     // UPDATE
-//     public Rol update(Rol rol) throws SQLException {
-//         String sql = "UPDATE ROLES SET NOMBRE = ?, DESCRIPCION = ? WHERE ID = ?";
-        
-//         try (Connection conn = dataSource.getConnection();
-//              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-//             stmt.setString(1, rol.getId());
-//             stmt.setString(2, rol.getDescripcion());
-//             stmt.setString(3, rol.getEstado());
-            
-//             int affectedRows = stmt.executeUpdate();
-            
-//             if (affectedRows == 0) {
-//                 throw new SQLException("No se encontró el rol con ID: " + rol.getId());
-//             }
-            
-//             return rol;
-//         }
-//     }
+            int result = ps.executeUpdate();
+            System.out.println("✅ Filas insertadas: " + result);
+            return r;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al insertar rol:");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-//     // DELETE
-//     public boolean delete(String id) throws SQLException {
-//         String sql = "DELETE FROM ROLES WHERE ID = ?";
-        
-//         try (Connection conn = dataSource.getConnection();
-//              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-//             stmt.setString(1, id);
-            
-//             int affectedRows = stmt.executeUpdate();
-//             return affectedRows > 0;
-//         }
-//     }
+    public static Rol obtenerRol(int id) {
+        String sql = "SELECT * FROM ROL WHERE ID_ROL = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Rol(
+                        rs.getInt("ID_ROL"),
+                        rs.getString("DESCRIPCION"),
+                        rs.getString("ESTADO")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al obtener rol:");
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-//     // Método auxiliar para mapear ResultSet a objeto Rol
-//     private Rol mapRowToRol(ResultSet rs) throws SQLException {
-//         Rol rol = new Rol();
-//         rol.setId(rs.getString("ID"));
-//         rol.setDescripcion(rs.getString("DESCRIPCION"));
-//         rol.setEstado(rs.getString("ESTADO"));
-//         return rol;
-//     }
+    public static List<Rol> listarRoles() {
+        String sql = "SELECT * FROM ROL";
+        List<Rol> roles = new ArrayList<>();
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                roles.add(new Rol(
+                        rs.getInt("ID_ROL"),
+                        rs.getString("DESCRIPCION"),
+                        rs.getString("ESTADO")
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al listar roles:");
+            e.printStackTrace();
+        }
+        return roles;
+    }
 
-//     // Cierre del pool de conexiones (llamar al detener la aplicación)
-//     public static void closeDataSource() {
-//         if (dataSource != null && !dataSource.isClosed()) {
-//             dataSource.close();
-//         }
-//     }
-// }
+    public static Rol actualizarRol(Rol r) {
+        String sql = "UPDATE ROL SET DESCRIPCION = ?, ESTADO = ? WHERE ID_ROL = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, r.getDescripcion());
+            ps.setString(2, r.getEstado());
+            ps.setInt(3, r.getId());
+
+            ps.executeUpdate();
+            System.out.println("✅ Rol actualizado: " + r.getId());
+            return r;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al actualizar rol:");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean eliminarRol(int id) {
+        String sql = "DELETE FROM ROL WHERE ID_ROL = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            boolean deleted = ps.executeUpdate() > 0;
+            System.out.println(deleted ? "✅ Rol eliminado: " + id : "⚠️ Rol no encontrado: " + id);
+            return deleted;
+        } catch (SQLException e) {
+            System.out.println("❌ Error al eliminar rol:");
+            e.printStackTrace();
+            return false;
+        }
+    }
+}

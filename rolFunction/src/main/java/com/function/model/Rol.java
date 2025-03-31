@@ -1,25 +1,29 @@
 package com.function.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-// import jakarta.persistence.*;
-
-// @Entity
-// @Table(name = "ROL", schema = "USER_BDD_USERS")
 public class Rol {
-    // @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @Column(name = "ID_ROL")
     private int id;
-    // @Column(name = "DESCRIPCION", nullable = false, length = 255)
     private String descripcion;
-    // @Column(name = "ESTADO", nullable = false, length = 1)
     private String estado;
 
-    public Rol(int id, String descripcion, String estado ){
+    @JsonCreator
+    public Rol(@JsonProperty("id_rol") int id, 
+               @JsonProperty("descripcion") String descripcion, 
+               @JsonProperty("estado") String estado) {
         this.id = id;
-        this.descripcion=descripcion;
+        this.descripcion = descripcion;
         this.estado = estado;
     }
+
+    public Rol() {}
+
+    // public Rol(int id, String descripcion, String estado ){
+    //     this.id = id;
+    //     this.descripcion=descripcion;
+    //     this.estado = estado;
+    // }
 
     // Getters y Setters
     public int getId() {
