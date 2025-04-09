@@ -1,0 +1,25 @@
+type Rol {
+  id: Int
+  descripcion: String
+  estado: String
+}
+
+type Usuario {
+  id: String
+  username:String
+  pass:String
+  nombre:String
+  apellido:String
+}
+
+type Query {
+  obtenerRol(id: Int!): Rol
+  listarRoles: [Rol]
+  usuariosByRol(id:Int!): [Usuario]
+}
+
+type Mutation {
+  crearRol(id: Int!, descripcion: String!, estado: String!): Rol
+  actualizarRol(id: Int!, descripcion: String!, estado: String!): Rol
+  eliminarRol(id: Int!): Boolean
+}

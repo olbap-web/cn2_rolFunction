@@ -79,12 +79,17 @@
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>oraclepki</artifactId>
             <version>21.9.0.0</version>
-            </dependency>
-            <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>osdt_core</artifactId>
             <version>21.9.0.0</version>
-            </dependency>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <version>17.3</version>
+        </dependency>
             <!-- <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>osdt_cert</artifactId>

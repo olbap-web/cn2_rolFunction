@@ -6,12 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.function.model.Rol;
+import com.function.model.Usuario;
+
+import graphql.GraphQL;
 
 public class RolDAO {
 
     private static final String DB_USER = "user_bdd_users";
     private static final String DB_PASS = "ActSum.S5_BDY";
     private static final String WALLET_PATH = "C: /Wallet_CSMZSQ3ZR41HPBVN";
+
+    // private static final GraphQL graphQl;
 
     static {
         System.setProperty("oracle.net.tns_admin", WALLET_PATH);
@@ -58,6 +63,35 @@ public class RolDAO {
                         rs.getString("ESTADO")
                 );
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error al obtener rol:");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<Usuario> getUsuariosByRol(int id) {
+        String sql = "SELECT  u.ID_USUARIO, u.USERNAME, u.PASS, u.NOMBRE, u.APELLIDO FROM ROL r  JOIN USUARIO_ROL ur on ur.ROL_ID_ROL = r.ID_ROL JOIN USUARIO u on u.ID_USUARIO = ur.USUARIO_ID_USUARIO WHERE r.ID_ROL = ?";
+        
+        List<Usuario> users = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                users.add(new Usuario(
+                    rs.getInt("ID_USUARIO"),
+                    rs.getString("USERNAME"),
+                    rs.getString("PASS"),
+                    rs.getString("NOMBRE"),
+                    rs.getString("APELLIDO")
+                    )
+                );
+            }
+            return users;
+            
         } catch (SQLException e) {
             System.out.println("❌ Error al obtener rol:");
             e.printStackTrace();
