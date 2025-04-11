@@ -44,7 +44,7 @@ public class RolDAO {
             System.out.println("✅ Filas insertadas: " + result);
             return r;
         } catch (SQLException e) {
-            System.out.println("❌ Error al insertar rol:");
+            System.out.println(" Error al insertar rol:");
             e.printStackTrace();
             return null;
         }
@@ -64,7 +64,7 @@ public class RolDAO {
                 );
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error al obtener rol:");
+            System.out.println(" Error al obtener rol:");
             e.printStackTrace();
         }
         return null;
@@ -93,7 +93,7 @@ public class RolDAO {
             return users;
             
         } catch (SQLException e) {
-            System.out.println("❌ Error al obtener rol:");
+            System.out.println(" Error al obtener rol:");
             e.printStackTrace();
         }
         return null;
@@ -113,7 +113,7 @@ public class RolDAO {
                 ));
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error al listar roles:");
+            System.out.println(" Error al listar roles:");
             e.printStackTrace();
         }
         return roles;
@@ -131,7 +131,7 @@ public class RolDAO {
             System.out.println("✅ Rol actualizado: " + r.getId());
             return r;
         } catch (SQLException e) {
-            System.out.println("❌ Error al actualizar rol:");
+            System.out.println(" Error al actualizar rol:");
             e.printStackTrace();
             return null;
         }
@@ -146,7 +146,7 @@ public class RolDAO {
             System.out.println(deleted ? "✅ Rol eliminado: " + id : "⚠️ Rol no encontrado: " + id);
             return deleted;
         } catch (SQLException e) {
-            System.out.println("❌ Error al eliminar rol:");
+            System.out.println(" Error al eliminar rol:");
             e.printStackTrace();
             return false;
         }
