@@ -16,6 +16,16 @@ import com.function.model.Rol;
 import com.function.model.Usuario;
 import com.function.utils.ResourceUtils;
 
+//________________________________-
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.HttpsURLConnection;
+import java.security.cert.X509Certificate;
+
+//____
+
 public class RolDAO {
 
     private static final String SELECT_USUARIOS_BY_ROL_SQL = """
@@ -186,32 +196,75 @@ public class RolDAO {
         }
     }
 
+    // public static boolean sendEventToEventGrid(String eventType, String data, Logger logger) {
+    //     try {
+    //         EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
+    //                 .endpoint(eventGridTopicEndpoint)
+    //                 .credential(new AzureKeyCredential(eventGridTopicKey))
+    //                 .buildEventGridEventPublisherClient();
+
+
+    //         EventGridEvent event = new EventGridEvent(
+    //                 "../consumerEG-1.0-SNAPSHOT.jar",
+    //                 eventType,
+    //                 BinaryData.fromObject(data),
+    //                 "1.0"
+    //         );
+
+    //         System.out.println(data);
+
+    //         System.out.println(client.toString());
+
+
+    //         client.sendEvent(event);
+
+    //         logger.info(" Evento enviado correctamente: " + eventType);
+    //         return true;
+    //     } catch (Exception e) {
+    //         logger.severe(" Error al enviar evento: " + e.getMessage());
+    //         return false;
+    //     }
+    // }
+
     public static boolean sendEventToEventGrid(String eventType, String data, Logger logger) {
         try {
+            // ⚠️ TrustManager que confía en todos los certificados (no recomendado en producción)
+            TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+            };
+    
+            // Instala el TrustManager globalmente
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    
             EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
                     .endpoint(eventGridTopicEndpoint)
                     .credential(new AzureKeyCredential(eventGridTopicKey))
                     .buildEventGridEventPublisherClient();
-
-
+    
             EventGridEvent event = new EventGridEvent(
                     "../consumerEG-1.0-SNAPSHOT.jar",
                     eventType,
                     BinaryData.fromObject(data),
                     "1.0"
             );
-
+    
             System.out.println(data);
-
             System.out.println(client.toString());
-
-
+    
             client.sendEvent(event);
-
-            logger.info(" Evento enviado correctamente: " + eventType);
+    
+            logger.info("Evento enviado correctamente: " + eventType);
             return true;
         } catch (Exception e) {
-            logger.severe(" Error al enviar evento: " + e.getMessage());
+            logger.severe("Error al enviar evento: " + e.getMessage());
             return false;
         }
     }
