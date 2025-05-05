@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.function.dao.RolDAO;
+import com.function.dao.SSLBypass;
 import com.function.graphql.GraphQLProvider;
 import com.function.model.Rol;
 
@@ -22,6 +23,7 @@ public class Function {
      * @param request
      * @param context
      * @return
+     * @throws Exception 
      */
 
     @FunctionName("rol")
@@ -29,8 +31,10 @@ public class Function {
         @HttpTrigger(name = "req", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS)
         HttpRequestMessage<Map<String, Object>> request,
         final ExecutionContext context
-    ) {
+    ) throws Exception {
         GraphQLProvider.init();
+
+        SSLBypass.disableSSLVerification();
 
         String query = (String) request.getBody().get("query");
         Map<String, Object> variables = (Map<String, Object>) request.getBody().get("variables");
