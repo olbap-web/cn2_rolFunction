@@ -34,7 +34,7 @@ public class Function {
     ) throws Exception {
         GraphQLProvider.init();
 
-        SSLBypass.disableSSLVerification();
+        // SSLBypass.disableSSLVerification();
 
         String query = (String) request.getBody().get("query");
         Map<String, Object> variables = (Map<String, Object>) request.getBody().get("variables");

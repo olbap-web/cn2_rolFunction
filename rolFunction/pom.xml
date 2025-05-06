@@ -86,7 +86,32 @@
             <artifactId>graphql-java</artifactId>
             <version>17.3</version>
         </dependency>
-    
+        <!-- Azure EventGrid SDK -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-messaging-eventgrid</artifactId>
+            <version>4.21.0</version> 
+        </dependency>
+
+        <!-- Netty HTTP client usado por el SDK de Azure -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core-http-netty</artifactId>
+            <version>1.14.0</version> 
+        </dependency>
+
+        <!-- Para trabajar con SSL en Netty -->
+        <!-- <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.104.Final</version> 
+        </dependency> -->
+
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core-http-okhttp</artifactId>
+            <version>1.12.10</version>
+        </dependency>   
         <!-- <dependency>
             <groupId>com.sun.net.ssl</groupId>
             <artifactId>internal-ssl</artifactId>
@@ -105,11 +130,11 @@
                 <artifactId>azure-functions-java-library</artifactId>
                 <version>1.4.2</version>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.azure</groupId>
                 <artifactId>azure-messaging-eventgrid</artifactId>
                 <version>4.0.0</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>com.azure</groupId>
                 <artifactId>azure-core</artifactId>
