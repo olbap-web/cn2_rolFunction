@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import com.azure.core.credential.AzureKeyCredential;
+import com.azure.core.http.netty.NettyAsyncHttpClientBuilder;
 import com.azure.core.http.okhttp.OkHttpAsyncHttpClientBuilder;
 import com.azure.core.util.BinaryData;
 import com.azure.messaging.eventgrid.EventGridEvent;
@@ -106,23 +107,31 @@ public class RolDAO {
 
         try {
            
-            EventGridPublisherClient<EventGridEvent> client =
-            new EventGridPublisherClientBuilder()
-                .endpoint(eventGridTopicEndpoint)
-                .credential(new AzureKeyCredential(eventGridTopicKey))
-                .buildEventGridEventPublisherClient();
+            // EventGridPublisherClient<EventGridEvent> client =
+            // new EventGridPublisherClientBuilder()
+            //     .endpoint("https://usuarioroleventgrid.eastus-1.eventgrid.azure.net/api/events")
+            //     .credential(new AzureKeyCredential("AWZXlHrg5B1PLu4zg6YV5IWm56EZ41iopMcAhNyJUHcyxwBuzcrCJQQJ99BEACYeBjFXJ3w3AAABAZEG3VAM"))
+            //     .buildEventGridEventPublisherClient();
 
-                EventGridEvent event = new EventGridEvent(
-                    subject,
-                    eventType,
-                    BinaryData.fromObject(data),
-                    "1.0"
-                );
+            //     EventGridEvent event = new EventGridEvent(
+            //         subject,
+            //         eventType,
+            //         BinaryData.fromObject(data),
+            //         "1.0"
+            //     );
 
-                event.setEventTime(OffsetDateTime.now());
-                event.setTopic("usuarioRolEventGrid");
-                client.sendEvent(event);
-
+            //     event.setEventTime(OffsetDateTime.now());
+            //     event.setTopic("usuarioRolEventGrid");
+            //     client.sendEvent(event);
+            EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
+                .endpoint("https://usuarioroleventgrid.eastus-1.eventgrid.azure.net/api/events")
+                .credential(new AzureKeyCredential("2iHMJNambxhzRRcfxSgCTjek8W2DVb4hrzotRW4e2axJEKggT1s9JQQJ99BEACYeBjFXJ3w3AAABAZEGKkij"))
+                .httpClient(new NettyAsyncHttpClientBuilder().build()) // explícitamente define el cliente
+                .buildEventGridEventPublisherClient()
+            ;
+            //     event.setEventTime(OffsetDateTime.now());
+            //     event.setTopic("usuarioRolEventGrid");
+            //     client.sendEvent(event);
 
             logger.info(" Evento enviado correctamente: " + eventType);
             return true;
