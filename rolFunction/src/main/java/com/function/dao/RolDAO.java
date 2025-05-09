@@ -47,7 +47,8 @@ public class RolDAO {
     private static final String DB_PASS = "ActSum.S5_BDY";
     private static String WALLET_PATH;
 
-
+    private static final String eventGridTopicEndpoint = "https://usuarioroleventgrid.eastus-1.eventgrid.azure.net/api/events";
+    private static final String eventGridTopicKey = "AWZXlHrg5B1PLu4zg6YV5IWm56EZ41iopMcAhNyJUHcyxwBuzcrCJQQJ99BEACYeBjFXJ3w3AAABAZEG3VAM";
 
     private static final Logger logger = Logger.getLogger(RolDAO.class.getName());
 
@@ -107,8 +108,8 @@ public class RolDAO {
            
             EventGridPublisherClient<EventGridEvent> client =
             new EventGridPublisherClientBuilder()
-                // .endpoint(eventGridTopicEndpoint)
-                // .credential(new AzureKeyCredential(eventGridTopicKey))
+                .endpoint(eventGridTopicEndpoint)
+                .credential(new AzureKeyCredential(eventGridTopicKey))
                 .buildEventGridEventPublisherClient();
 
                 EventGridEvent event = new EventGridEvent(
