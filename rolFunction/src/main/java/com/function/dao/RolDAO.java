@@ -2,6 +2,7 @@ package com.function.dao;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import com.azure.core.util.BinaryData;
 import com.azure.messaging.eventgrid.EventGridEvent;
 import com.azure.messaging.eventgrid.EventGridPublisherClient;
 import com.azure.messaging.eventgrid.EventGridPublisherClientBuilder;
+// import com.azure.messaging.eventgrid.implementation.models.CloudEvent;
 import com.function.model.Rol;
 import com.function.model.Usuario;
 import com.function.utils.ResourceUtils;
@@ -45,8 +47,7 @@ public class RolDAO {
     private static final String DB_PASS = "ActSum.S5_BDY";
     private static String WALLET_PATH;
 
-    private static final String eventGridTopicEndpoint = "https://usuarioroleventgrid.eastus-1.eventgrid.azure.net/api/events";
-    private static final String eventGridTopicKey = "2iHMJNambxhzRRcfxSgCTjek8W2DVb4hrzotRW4e2axJEKggT1s9JQQJ99BEACYeBjFXJ3w3AAABAZEGKkij";
+
 
     private static final Logger logger = Logger.getLogger(RolDAO.class.getName());
 
@@ -72,6 +73,62 @@ public class RolDAO {
         Connection conn = DriverManager.getConnection(url, DB_USER, DB_PASS);
         logger.info("¡Conexión exitosa!");
         return conn;
+    }
+     // En el método actualizarRol
+     public static Rol actualizarRol(Rol r) {
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(UPDATE_ROL_SQL)) {
+            ps.setString(1, r.getDescripcion());
+            ps.setString(2, r.getEstado());
+            ps.setInt(3, r.getId());
+    
+            ps.executeUpdate();
+            logger.info("Rol actualizado: " + r.getId());
+    
+            // Usar EventGridHelper para enviar el evento
+            String mensaje = "Se actualiza ROL: id " + r.getId() + " | desc: " + r.getDescripcion();
+            // EventGridHelper.sendEvent("RolActualizado.eventGridTrigger", mensaje, logger);
+            // sendEventToEventGrid()
+            // System.out.println(mensaje);
+
+            sendEventToEventGrid("api/rol/actualizaRol ","Rol.Update",r);
+            
+            return r;
+        } catch (SQLException e) {
+            logger.severe("Error al actualizar rol: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static boolean sendEventToEventGrid(String subject, String eventType, Object data) {
+
+
+        try {
+           
+            EventGridPublisherClient<EventGridEvent> client =
+            new EventGridPublisherClientBuilder()
+                // .endpoint(eventGridTopicEndpoint)
+                // .credential(new AzureKeyCredential(eventGridTopicKey))
+                .buildEventGridEventPublisherClient();
+
+                EventGridEvent event = new EventGridEvent(
+                    subject,
+                    eventType,
+                    BinaryData.fromObject(data),
+                    "1.0"
+                );
+
+                event.setEventTime(OffsetDateTime.now());
+                event.setTopic("usuarioRolEventGrid");
+                client.sendEvent(event);
+
+
+            logger.info(" Evento enviado correctamente: " + eventType);
+            return true;
+        } catch (Exception e) {
+            logger.severe(" Error al enviar evento: " + e.getMessage());
+            return false;
+        }
     }
 
     // En el método crearRol
@@ -187,75 +244,7 @@ public static Rol crearRol(Rol r) {
             return false;
         }
     }
-    // En el método actualizarRol
-    public static Rol actualizarRol(Rol r) {
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(UPDATE_ROL_SQL)) {
-            ps.setString(1, r.getDescripcion());
-            ps.setString(2, r.getEstado());
-            ps.setInt(3, r.getId());
-    
-            ps.executeUpdate();
-            logger.info("Rol actualizado: " + r.getId());
-    
-            // Usar EventGridHelper para enviar el evento
-            String mensaje = "Se actualiza ROL: id " + r.getId() + " | desc: " + r.getDescripcion();
-            // EventGridHelper.sendEvent("RolActualizado.eventGridTrigger", mensaje, logger);
-            // sendEventToEventGrid()
-            // System.out.println(mensaje);
-
-            sendEventToEventGrid(mensaje);
-            
-            return r;
-        } catch (SQLException e) {
-            logger.severe("Error al actualizar rol: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static boolean sendEventToEventGrid( String data) {
-
-
-        try {
-            // String subject = "/subscriptions/60521ee6-2290-4e18-abc7-c651016b83a9/resourceGroups/med_resource_cn/providers/Microsoft.EventGrid/topics/usuarioRolEventGrid";
-
-            String subject= "EventGridSchema";
-            String eventType ="Microsoft.EventGrid/topics";
-
-            // EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
-            //         .endpoint(eventGridTopicEndpoint)
-            //         .credential(new AzureKeyCredential(eventGridTopicKey))
-            //         .buildEventGridEventPublisherClient();
-
-            EventGridPublisherClient<EventGridEvent> client =
-            new EventGridPublisherClientBuilder()
-                .endpoint(eventGridTopicEndpoint)
-                .credential(new AzureKeyCredential(eventGridTopicKey))
-                .httpClient(new OkHttpAsyncHttpClientBuilder().build())
-                .buildEventGridEventPublisherClient();
-
-
-            EventGridEvent event = new EventGridEvent(
-                    subject,
-                    eventType,
-                    BinaryData.fromObject(data),
-                    "1.0"
-            );
-
-            System.out.println(data);
-
-            System.out.println(client.toString());
-
-
-            client.sendEvent(event);
-
-            logger.info(" Evento enviado correctamente: " + eventType);
-            return true;
-        } catch (Exception e) {
-            logger.severe(" Error al enviar evento: " + e.getMessage());
-            return false;
-        }
-    }
+   
     
    
 }
