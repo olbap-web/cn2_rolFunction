@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -113,27 +114,32 @@ public class RolDAO {
             //     .credential(new AzureKeyCredential("AWZXlHrg5B1PLu4zg6YV5IWm56EZ41iopMcAhNyJUHcyxwBuzcrCJQQJ99BEACYeBjFXJ3w3AAABAZEG3VAM"))
             //     .buildEventGridEventPublisherClient();
 
-                EventGridEvent event = new EventGridEvent(
-                    "/topics/usuarioRolEventGrid",
-                    "Microsoft.EventGrid/topics",
-                    BinaryData.fromObject(data),
-                    "1.0"
-                );
-
+            
             //     event.setEventTime(OffsetDateTime.now());
             //     event.setTopic("usuarioRolEventGrid");
             //     client.sendEvent(event);
+
+
+
+            EventGridEvent event = new EventGridEvent(
+                "/topics/usuarioRolEventGrid",
+                "Microsoft.EventGrid/topics",
+                BinaryData.fromObject(data),
+                "1.0"
+            );
+
+
             EventGridPublisherClient<EventGridEvent> client = new EventGridPublisherClientBuilder()
                 .endpoint("https://usuarioroleventgrid.eastus-1.eventgrid.azure.net/api/events")
                 .credential(new AzureKeyCredential("2iHMJNambxhzRRcfxSgCTjek8W2DVb4hrzotRW4e2axJEKggT1s9JQQJ99BEACYeBjFXJ3w3AAABAZEGKkij"))
-                .httpClient(new NettyAsyncHttpClientBuilder().build()) // explícitamente define el cliente
+                .httpClient(new NettyAsyncHttpClientBuilder().build()) 
                 .buildEventGridEventPublisherClient()
             ;
 
             System.out.println("si crea el cliente.");
 
-            event.setEventTime(OffsetDateTime.now());
-            event.setTopic("usuarioRolEventGrid");
+            // event.setEventTime(OffsetDateTime.now());
+            // event.setTopic("usuarioRolEventGrid");
             client.sendEvent(event);
 
             logger.info(" Evento enviado correctamente: " );
