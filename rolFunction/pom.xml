@@ -1,5 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.function</groupId>
@@ -18,136 +20,108 @@
         <skipTests>true</skipTests>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-sdk-bom</artifactId>
+                <version>1.2.34</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- Azure -->
+        <dependency>
+            <groupId>com.microsoft.azure.functions</groupId>
+            <artifactId>azure-functions-java-library</artifactId>
+            <version>${azure.functions.java.library.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.azure</groupId>
-            <artifactId>azure-sdk-bom</artifactId>
-            <version>1.2.34</version>
-            <type>pom</type>
-            <scope>import</scope>
+            <artifactId>azure-messaging-eventgrid</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core</artifactId>
+            <version>1.49.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core-http-netty</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core-http-okhttp</artifactId>
+            <version>1.12.10</version>
         </dependency>
 
+        <!-- Oracle JDBC y Wallet -->
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>21.9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.security</groupId>
+            <artifactId>oraclepki</artifactId>
+            <version>21.9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.security</groupId>
+            <artifactId>osdt_core</artifactId>
+            <version>21.9.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.security</groupId>
+            <artifactId>osdt_cert</artifactId>
+            <version>21.9.0.0</version>
+        </dependency>
+
+        <!-- Pool de conexiones -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- GraphQL (si estás usando esta tecnología para procesamiento interno) -->
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <version>17.3</version>
+        </dependency>
+
+        <!-- JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.0</version>
         </dependency>
-        
-        <!-- Test -->
+
+        <!-- <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.36</version>
+        </dependency> -->
+
+        <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.4.2</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>2.23.4</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Oracle JDBC Driver -->
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-
-        <!-- Librerías de seguridad para el Wallet -->
-        <dependency>
-            <groupId>com.oracle.database.security</groupId>
-            <artifactId>oraclepki</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.database.security</groupId>
-            <artifactId>osdt_core</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.oracle.database.security</groupId>
-            <artifactId>osdt_cert</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.0.1</version> <!-- Última versión estable al 2024 -->
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>oraclepki</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>osdt_core</artifactId>
-            <version>21.9.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.graphql-java</groupId>
-            <artifactId>graphql-java</artifactId>
-            <version>17.3</version>
-        </dependency>
-        <!-- Azure EventGrid SDK -->
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-messaging-eventgrid</artifactId>
-            <version>4.12.0</version> 
-        </dependency>
-
-        <!-- Netty HTTP client usado por el SDK de Azure -->
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-core-http-netty</artifactId>
-            <version>1.14.0</version> 
-        </dependency>
-
-        <!-- Para trabajar con SSL en Netty -->
-        <!-- <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>4.1.104.Final</version> 
-        </dependency> -->
-
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-core-http-okhttp</artifactId>
-            <version>1.12.10</version>
-        </dependency>   
-        <!-- <dependency>
-            <groupId>com.sun.net.ssl</groupId>
-            <artifactId>internal-ssl</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-        </dependency> -->
-
-            <!-- <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>osdt_cert</artifactId>
-            <version>21.9.0.0</version>
-            </dependency> -->
-
-            <dependency>
-                <groupId>com.microsoft.azure.functions</groupId>
-                <artifactId>azure-functions-java-library</artifactId>
-                <version>1.4.2</version>
-            </dependency>
-            <!-- <dependency>
-                <groupId>com.azure</groupId>
-                <artifactId>azure-messaging-eventgrid</artifactId>
-                <version>4.0.0</version>
-            </dependency> -->
-            <dependency>
-                <groupId>com.azure</groupId>
-                <artifactId>azure-core</artifactId>
-                <version>1.49.0</version>
-            </dependency>
-
     </dependencies>
 
     <build>
@@ -167,23 +141,11 @@
                 <artifactId>azure-functions-maven-plugin</artifactId>
                 <version>${azure.functions.maven.plugin.version}</version>
                 <configuration>
-                    <!-- function app name -->
                     <appName>${functionAppName}</appName>
-                    <!-- function app resource group -->
                     <resourceGroup>java-functions-group</resourceGroup>
-                    <!-- function app region-->
-                    <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-regions for all valid values -->
                     <region>westus</region>
-                    <!-- function app service plan name -->
                     <appServicePlanName>java-functions-app-service-plan</appServicePlanName>
-                    <!-- function pricingTier, default to be consumption if not specified -->
-                    <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details#supported-pricing-tiers for all valid values -->
-                    <!-- <pricingTier></pricingTier> -->
-                    <!-- Whether to disable application insights, default is false -->
-                    <!-- refers https://github.com/microsoft/azure-maven-plugins/wiki/Azure-Functions:-Configuration-Details for all valid configurations for application insights-->
-                    <!-- <disableAppInsights></disableAppInsights> -->
                     <runtime>
-                        <!-- runtime os, could be windows, linux or docker-->
                         <os>windows</os>
                         <javaVersion>21</javaVersion>
                     </runtime>
@@ -203,7 +165,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--Remove obj folder generated by .NET SDK in maven clean-->
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>3.1.0</version>

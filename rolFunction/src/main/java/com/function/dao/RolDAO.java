@@ -93,7 +93,7 @@ public class RolDAO {
             // sendEventToEventGrid()
             // System.out.println(mensaje);
 
-            sendEventToEventGrid("api/rol/actualizaRol ","Rol.Update",r);
+            sendEventToEventGrid(r);
             
             return r;
         } catch (SQLException e) {
@@ -102,7 +102,7 @@ public class RolDAO {
             return null;
         }
     }
-    public static boolean sendEventToEventGrid(String subject, String eventType, Object data) {
+    public static boolean sendEventToEventGrid(Object data) {
 
 
         try {
@@ -113,12 +113,12 @@ public class RolDAO {
             //     .credential(new AzureKeyCredential("AWZXlHrg5B1PLu4zg6YV5IWm56EZ41iopMcAhNyJUHcyxwBuzcrCJQQJ99BEACYeBjFXJ3w3AAABAZEG3VAM"))
             //     .buildEventGridEventPublisherClient();
 
-            //     EventGridEvent event = new EventGridEvent(
-            //         subject,
-            //         eventType,
-            //         BinaryData.fromObject(data),
-            //         "1.0"
-            //     );
+                EventGridEvent event = new EventGridEvent(
+                    "/topics/usuarioRolEventGrid",
+                    "Microsoft.EventGrid/topics",
+                    BinaryData.fromObject(data),
+                    "1.0"
+                );
 
             //     event.setEventTime(OffsetDateTime.now());
             //     event.setTopic("usuarioRolEventGrid");
@@ -129,11 +129,14 @@ public class RolDAO {
                 .httpClient(new NettyAsyncHttpClientBuilder().build()) // explícitamente define el cliente
                 .buildEventGridEventPublisherClient()
             ;
-            //     event.setEventTime(OffsetDateTime.now());
-            //     event.setTopic("usuarioRolEventGrid");
-            //     client.sendEvent(event);
 
-            logger.info(" Evento enviado correctamente: " + eventType);
+            System.out.println("si crea el cliente.");
+
+            event.setEventTime(OffsetDateTime.now());
+            event.setTopic("usuarioRolEventGrid");
+            client.sendEvent(event);
+
+            logger.info(" Evento enviado correctamente: " );
             return true;
         } catch (Exception e) {
             logger.severe(" Error al enviar evento: " + e.getMessage());
